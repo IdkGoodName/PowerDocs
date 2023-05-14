@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<UsingTask TaskName="PowerDocs.Task.PowerDocsTask"
+		AssemblyFile="$(MSBuildThisFileDirectory)PowerDocs.dll" />
+	<UsingTask TaskName="EnsurePowerDocsExternLinksFilesRooted"
+		TaskFactory="RoslynCodeTaskFactory"
+		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+			<FilePaths Required="true" />
+			<Result Output="true" />
+		</ParameterGroup>
+		<Task>
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					List<string> paths = new List<string>();
+					foreach (string path in (FilePaths ?? string.Empty).Split('|'))
+					{
+						if (!string.IsNullOrEmpty(path))
+						{
+							paths.Add(Path.IsPathRooted(path) ? path : Path.Combine(Environment.CurrentDirectory, path));
+						}
+					}
+        
+					Result = string.Join("|", paths);
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
+	<Target Name="PowerDocs" AfterTargets="PostBuildEvent"
+		Condition="'$(DocumentationFile)' != '' AND '$(DisablePowerDocs)' != 'true'">
+		<PropertyGroup>
+			<_PowerDocsConfigurationFile
+				Condition="'$(PowerDocsConfigurationFile)' != ''">
+				$([System.IO.Path]::GetFullPath($(PowerDocsConfigurationFile)))</_PowerDocsConfigurationFile>
+			<_PowerDocsConfigurationFile
+				Condition="'$(PowerDocsConfigurationFile)' == ''">
+				$(ProjectDir)PowerDocs.json</_PowerDocsConfigurationFile>
+			<_PowerDocsDocumentationFile
+				Condition="'$(MSBuildProjectExtension)' != '.vbproj'">
+				$([System.IO.Path]::GetFullPath($(DocumentationFile)))</_PowerDocsDocumentationFile>
+			<_PowerDocsDocumentationFile
+				Condition="'$(MSBuildProjectExtension)' == '.vbproj'">
+				$([System.IO.Path]::GetFullPath($(IntermediateOutputPath)$(DocumentationFile)))</_PowerDocsDocumentationFile>
+			<_PowerDocsFolder Condition="'$(PowerDocsFolder)' != ''">
+				$([System.IO.Path]::GetFullPath($(PowerDocsFolder)))</_PowerDocsFolder>
+			<_PowerDocsLinksOutputFile
+				Condition="'$(PowerDocsLinksOutputFile)' != ''">
+				$([System.IO.Path]::GetFullPath($(PowerDocsLinksOutputFile)))</_PowerDocsLinksOutputFile>
+		</PropertyGroup>
+
+		<EnsurePowerDocsExternLinksFilesRooted
+			Condition="'$(PowerDocsExternLinksFiles)' != ''"
+			FilePaths="$(PowerDocsExternLinksFiles)">
+			<Output PropertyName="_PowerDocsExternLinksFiles" TaskParameter="Result" />
+		</EnsurePowerDocsExternLinksFilesRooted>
+
+		<EnsurePowerDocsExternLinksFilesRooted
+			Condition="'$(PowerDocsPlugins)' != ''"
+			FilePaths="$(PowerDocsPlugins)">
+			<Output PropertyName="_PowerDocsPlugins" TaskParameter="Result" />
+		</EnsurePowerDocsExternLinksFilesRooted>
+
+		<PowerDocsTask
+			LogLevel="$(PowerDocsLogLevel)"
+			ConfigurationFilePath="$(_PowerDocsConfigurationFile)"
+			AssemblyFilePath="$(TargetPath)"
+			DocumentationFilePath="$(_PowerDocsDocumentationFile)"
+			ProjectDirectoryPath="$(ProjectDir)"
+			OutputDirectoryPath="$(_PowerDocsFolder)"
+			AssemblyPageName="$(PowerDocsAssemblyPageName)"
+			GeneratedAccessModifiers="$(PowerDocsGeneratedAccessModifiers)"
+			IncludeUndocumentedItems="$(PowerDocsIncludeUndocumentedItems)"
+			GeneratedPages="$(PowerDocsGeneratedPages)"
+			LinksOutputFilePath="$(_PowerDocsLinksOutputFile)"
+			LinksBaseUrl="$(PowerDocsLinksBaseUrl)"
+			ExternLinksFilePaths="$(_PowerDocsExternLinksFiles)"
+			Plugins="$(_PowerDocsPlugins)"
+			UrlFactories="$(PowerDocsUrlFactories)"
+			Elements="$(PowerDocsElements)"
+			FileNameFactory="$(PowerDocsFileNameFactory)"
+			Sections="$(PowerDocsSections)" />
+	</Target>
+</Project>

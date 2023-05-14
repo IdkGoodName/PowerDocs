@@ -1,0 +1,9 @@
+{
+    "profiles": {
+        "DefaultDocumentation.Console": {
+            "commandName": "Project",
+            "commandLineArgs": "--ConfigurationFilePath D:\\Projects/PowerDocs\\source/PowerDocs.Api/PowerDocs.json",
+            "workingDirectory": "D:\\Projects/PowerDocs"
+        }
+    }
+}

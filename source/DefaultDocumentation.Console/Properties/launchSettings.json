@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "DefaultDocumentation.Console": {
-      "commandName": "Project",
-      "commandLineArgs": "--ConfigurationFilePath D:\\Projects\\DefaultDocumentation\\source\\DefaultDocumentation.Api\\DefaultDocumentation.json",
-      "workingDirectory": "D:\\Projects\\DefaultDocumentation"
-    }
-  }
-}

@@ -1,0 +1,16 @@
+﻿{
+    "AssemblyFilePath": "bin\\Release\\netstandard2.0/PowerDocs.Api.dll",
+    "OutputDirectoryPath": "..\\..\\documentation\\api",
+    "GeneratedAccessModifiers": "Public,Protected,ProtectedInternal",
+    "GeneratedPages": "Assembly,Types,Members",
+    "FileNameFactory": "Name",
+    "ExternLinksFilePaths": [
+        "..\\..\\documentation\\ICSharpCode.Decompiler.txt"
+    ],
+    "LinksOutputFilePath": "..\\..\\documentation/PowerDocs.Api.txt",
+    "LinksBaseUrl": "https://github.com/Doraku/DefaultDocumentation/blob/master/documentation/api/",
+    "NamespaceDocItem": {
+        "Sections": ["Title", "summary", "TableOfContents"],
+        "Markdown.TableOfContentsModes": "IncludeKind,IncludeSummary"
+    }
+}
